@@ -223,3 +223,5 @@ PRODUCT_PACKAGES += android.hardware.keymaster@3.0-impl
 
 #Enable Lights Impl HAL Compilation
 PRODUCT_PACKAGES += android.hardware.light@2.0-impl
+
+PRODUCT_PROPERTY_OVERRIDES += rild.libpath=/system/vendor/lib/libril-qc-qmi-1.so
