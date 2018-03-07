@@ -21,7 +21,12 @@ ifeq ($(TARGET_ARCH),)
 TARGET_ARCH := arm
 endif
 
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-linux-androidkernel-
+else
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(PWD)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
+endif
+
 BOARD_USES_GENERIC_AUDIO := true
 
 -include $(QCPATH)/common/msm8937_32/BoardConfigVendor.mk
@@ -125,8 +130,24 @@ TARGET_COPY_OUT_VENDOR := vendor
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 endif
 
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+KASLRSEED_SUPPORT := true
+endif
+
 #TARGET_USES_AOSP := true
-BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom androidboot.memcg=false user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000
+
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+
+BOARD_VENDOR_KERNEL_MODULES := \
+    $(KERNEL_MODULES_OUT)/audio_apr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wglink.ko
+endif
+
+ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
+     BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 androidboot.hardware=qcom user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000
+else ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
+     BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom androidboot.memcg=false user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000
+endif
 
 BOARD_SECCOMP_POLICY := device/qcom/msm8937_32/seccomp
 

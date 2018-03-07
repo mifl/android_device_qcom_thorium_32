@@ -22,7 +22,16 @@ BOARD_HAVE_QCOM_FM := true
 ENABLE_AB ?= false
 
 TARGET_USES_NQ_NFC := true
-TARGET_KERNEL_VERSION := 3.18
+
+ifneq ($(wildcard kernel/msm-3.18),)
+    TARGET_KERNEL_VERSION := 3.18
+    $(warning "Build with 3.18 kernel.")
+else ifneq ($(wildcard kernel/msm-4.9),)
+    TARGET_KERNEL_VERSION := 4.9
+    $(warning "Build with 4.9 kernel.")
+else
+    $(warning "Unknown kernel")
+endif
 
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
 
@@ -61,6 +70,10 @@ $(call inherit-product, device/qcom/common/common.mk)
 
 PRODUCT_NAME := msm8937_32
 PRODUCT_DEVICE := msm8937_32
+
+#kernel modules install path
+KERNEL_MODULES_INSTALL := dlkm
+KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTALL)/lib/modules
 
 # When can normal compile this module, need module owner enable below commands
 # font rendering engine feature switch
