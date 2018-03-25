@@ -140,7 +140,8 @@ ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 
 BOARD_VENDOR_KERNEL_MODULES := \
     $(KERNEL_MODULES_OUT)/audio_apr.ko \
-    $(KERNEL_MODULES_OUT)/audio_wglink.ko
+    $(KERNEL_MODULES_OUT)/audio_wglink.ko \
+    $(KERNEL_MODULES_OUT)/pronto_wlan.ko
 endif
 
 ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
@@ -222,3 +223,7 @@ endif
 FEATURE_QCRIL_UIM_SAP_SERVER_MODE := true
 
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm
+
+ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
+PMIC_QG_SUPPORT := true
+endif
