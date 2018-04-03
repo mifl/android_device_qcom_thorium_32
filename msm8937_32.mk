@@ -33,7 +33,7 @@ else
     $(warning "Unknown kernel")
 endif
 
-TARGET_ENABLE_QC_AV_ENHANCEMENTS := false
+TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
 
 # Enable features in video HAL that can compile only on this platform
 TARGET_USES_MEDIA_EXTENSIONS := true
@@ -91,7 +91,7 @@ DEVICE_MANIFEST_FILE := device/qcom/msm8937_32/manifest.xml
 DEVICE_MATRIX_FILE   := device/qcom/common/compatibility_matrix.xml
 
 ifneq ($(strip $(QCPATH)),)
-#    PRODUCT_BOOT_JARS += WfdCommon
+    PRODUCT_BOOT_JARS += WfdCommon
     PRODUCT_BOOT_JARS += oem-services
     PRODUCT_BOOT_JARS += tcmiface
 #    PRODUCT_BOOT_JARS += dpmapi
