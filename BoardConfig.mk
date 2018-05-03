@@ -44,6 +44,8 @@ TARGET_NO_RPC := true
 BOOTLOADER_GCC_VERSION := arm-eabi-4.8
 BOOTLOADER_PLATFORM := msm8952# use 8952 LK configuration
 
+TARGET_KERNEL_ARCH := arm
+
 # Enables CSVT
 TARGET_USES_CSVT := true
 
