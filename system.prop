@@ -49,7 +49,7 @@ mmp.enable.3g2=true
 media.aac_51_output_enabled=true
 media.settings.xml=/vendor/etc/media_profiles_vendor.xml
 #codecs:(PARSER_)AAC AC3 AMR_NB AMR_WB ASF AVI DTS FLV 3GP 3G2 MKV MP2PS MP2TS MP3 OGG QCP WAV FLAC AIFF APE
-mm.enable.qcom_parser=1048575
+vendor.mm.enable.qcom_parser=1048575
 
 # system prop for UBWC
 video.disable.ubwc=1
@@ -63,9 +63,9 @@ persist.mm.sta.enable=0
 #
 # system props for the data modules
 #
-ro.use_data_netmgrd=true
+ro.vendor.use_data_netmgrd=true
 persist.data.netmgrd.qos.enable=true
-persist.data.mode=concurrent
+persist.vendor.data.mode=concurrent
 
 #system props for time-services
 persist.timed.enable=true
