@@ -44,6 +44,8 @@ TARGET_NO_RPC := true
 BOOTLOADER_GCC_VERSION := arm-eabi-4.8
 BOOTLOADER_PLATFORM := msm8952# use 8952 LK configuration
 
+TARGET_KERNEL_ARCH := arm
+
 # Enables CSVT
 TARGET_USES_CSVT := true
 
@@ -100,18 +102,36 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_msm
 endif
 
-ifeq ($(ENABLE_AB),true)
-  ifeq ($(ENABLE_VENDOR_IMAGE), true)
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_AB_split_variant.fstab
-  else
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_AB_non-split_variant.fstab
-  endif
+ifneq ($(wildcard kernel/msm-3.18),)
+    ifeq ($(ENABLE_AB),true)
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_AB_non-split_variant.fstab
+      endif
+    else
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_non-AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_non-AB_non-split_variant.fstab
+      endif
+    endif
+else ifneq ($(wildcard kernel/msm-4.9),)
+    ifeq ($(ENABLE_AB),true)
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_AB_non-split_variant.fstab
+      endif
+    else
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_non-AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_non-AB_non-split_variant.fstab
+      endif
+    endif
 else
-  ifeq ($(ENABLE_VENDOR_IMAGE), true)
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_non-AB_split_variant.fstab
-  else
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_non-AB_non-split_variant.fstab
-  endif
+    $(warning "Unknown kernel")
 endif
 
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -122,6 +142,9 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 1971322880
 BOARD_PERSISTIMAGE_PARTITION_SIZE := 33554432
 BOARD_OEMIMAGE_PARTITION_SIZE := 268435456
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+BOARD_DTBOIMG_PARTITION_SIZE := 0x0800000
+endif
 
 ifeq ($(ENABLE_VENDOR_IMAGE), true)
 BOARD_VENDORIMAGE_PARTITION_SIZE := 1073741824
@@ -248,4 +271,9 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm
 
 ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
 PMIC_QG_SUPPORT := true
+endif
+
+#Generate DTBO image
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+BOARD_KERNEL_SEPARATED_DTBO := true
 endif
