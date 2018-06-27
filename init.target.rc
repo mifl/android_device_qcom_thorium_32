@@ -248,7 +248,7 @@ service imsstarter /vendor/bin/init.qti.ims.sh
 on property:vold.decrypt=trigger_restart_framework
     start imsstarter
 
-## imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
+## imsqmidaemon starts with root and UID will be downgraded to SYSTEM.
 service vendor.imsqmidaemon /system/vendor/bin/imsqmidaemon
     class main
     user system
@@ -256,8 +256,8 @@ service vendor.imsqmidaemon /system/vendor/bin/imsqmidaemon
     group radio log diag
     disabled
 
-on property:service.qti.ims.enabled=1
-    start imsqmidaemon
+on property:vendor.service.qti.ims.enabled=1
+    start vendor.imsqmidaemon
 
 # imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
 service vendor.imsdatadaemon /system/vendor/bin/imsdatadaemon
@@ -279,7 +279,7 @@ service vendor.ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
 service vendor.imsrcsservice /system/vendor/bin/imsrcsd
    class main
    user system
-   group radio diag inet log
+   group radio diag inet log wakelock
    disabled
 
 on property:vendor.ims.DATA_DAEMON_STATUS=1
