@@ -1,4 +1,9 @@
 ALLOW_MISSING_DEPENDENCIES=true
+# Enable AVB 2.0
+ifneq ($(wildcard kernel/msm-4.9),)
+BOARD_AVB_ENABLE := true
+endif
+
 TARGET_USES_AOSP := true
 TARGET_USES_AOSP_FOR_AUDIO := false
 TARGET_USES_QCOM_BSP := false
@@ -152,6 +157,10 @@ PRODUCT_PACKAGES += libSubSystemShutdown
 
 PRODUCT_PACKAGES += wcnss_service
 
+# FBE support
+PRODUCT_COPY_FILES += \
+    device/qcom/msm8937_32/init.qti.qseecomd.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.qti.qseecomd.sh
+
 # MSM IRQ Balancer configuration file
 PRODUCT_COPY_FILES += \
     device/qcom/msm8937_32/msm_irqbalance.conf:$(TARGET_COPY_OUT_VENDOR)/etc/msm_irqbalance.conf
@@ -197,9 +206,8 @@ PRODUCT_COPY_FILES += \
      device/qcom/msm8937_32/powerhint.xml:system/etc/powerhint.xml
 
 #Healthd packages
-PRODUCT_PACKAGES += android.hardware.health@1.0-impl \
-                   android.hardware.health@1.0-convert \
-                   android.hardware.health@1.0-service \
+PRODUCT_PACKAGES += android.hardware.health@2.0-impl \
+                   android.hardware.health@2.0-service \
                    libhealthd.msm
 
 PRODUCT_FULL_TREBLE_OVERRIDE := true
@@ -234,11 +242,6 @@ PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-impl
 # Enable binderized camera HAL
 PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-service
 
-PRODUCT_SUPPORTS_VERITY := true
-PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
-ifeq ($(ENABLE_VENDOR_IMAGE), true)
-PRODUCT_VENDOR_VERITY_PARTITION := /dev/block/bootdevice/by-name/vendor
-endif
 # Enable logdumpd service only for non-perf bootimage
 ifeq ($(findstring perf,$(KERNEL_DEFCONFIG)),)
     ifeq ($(TARGET_BUILD_VARIANT),user)
@@ -303,3 +306,9 @@ PRODUCT_PACKAGES_DEBUG += bootctl
 endif
 
 SDM660_DISABLE_MODULE := true
+# When AVB 2.0 is enabled, dm-verity is enabled differently,
+# below definitions are only required for AVB 1.0
+ifeq ($(BOARD_AVB_ENABLE),false)
+# dm-verity definitions
+  PRODUCT_SUPPORTS_VERITY := true
+endif

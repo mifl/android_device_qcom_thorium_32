@@ -44,6 +44,8 @@ TARGET_NO_RPC := true
 BOOTLOADER_GCC_VERSION := arm-eabi-4.8
 BOOTLOADER_PLATFORM := msm8952# use 8952 LK configuration
 
+TARGET_KERNEL_ARCH := arm
+
 # Enables CSVT
 TARGET_USES_CSVT := true
 
@@ -100,18 +102,36 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
 #TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_msm
 endif
 
-ifeq ($(ENABLE_AB),true)
-  ifeq ($(ENABLE_VENDOR_IMAGE), true)
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_AB_split_variant.fstab
-  else
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_AB_non-split_variant.fstab
-  endif
+ifneq ($(wildcard kernel/msm-3.18),)
+    ifeq ($(ENABLE_AB),true)
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_AB_non-split_variant.fstab
+      endif
+    else
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_non-AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-3.18/recovery_non-AB_non-split_variant.fstab
+      endif
+    endif
+else ifneq ($(wildcard kernel/msm-4.9),)
+    ifeq ($(ENABLE_AB),true)
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_AB_non-split_variant.fstab
+      endif
+    else
+      ifeq ($(ENABLE_VENDOR_IMAGE), true)
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_non-AB_split_variant.fstab
+      else
+        TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/fstabs-4.9/recovery_non-AB_non-split_variant.fstab
+      endif
+    endif
 else
-  ifeq ($(ENABLE_VENDOR_IMAGE), true)
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_non-AB_split_variant.fstab
-  else
-    TARGET_RECOVERY_FSTAB := device/qcom/msm8937_32/recovery_non-AB_non-split_variant.fstab
-  endif
+    $(warning "Unknown kernel")
 endif
 
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -122,6 +142,9 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 1971322880
 BOARD_PERSISTIMAGE_PARTITION_SIZE := 33554432
 BOARD_OEMIMAGE_PARTITION_SIZE := 268435456
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+BOARD_DTBOIMG_PARTITION_SIZE := 0x0800000
+endif
 
 ifeq ($(ENABLE_VENDOR_IMAGE), true)
 BOARD_VENDORIMAGE_PARTITION_SIZE := 1073741824
@@ -140,12 +163,34 @@ ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 
 BOARD_VENDOR_KERNEL_MODULES := \
     $(KERNEL_MODULES_OUT)/audio_apr.ko \
-    $(KERNEL_MODULES_OUT)/audio_wglink.ko \
-    $(KERNEL_MODULES_OUT)/pronto_wlan.ko
+    $(KERNEL_MODULES_OUT)/pronto_wlan.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6_notifier.ko \
+    $(KERNEL_MODULES_OUT)/audio_adsp_loader.ko \
+    $(KERNEL_MODULES_OUT)/audio_q6.ko \
+    $(KERNEL_MODULES_OUT)/audio_usf.ko \
+    $(KERNEL_MODULES_OUT)/audio_pinctrl_wcd.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_core.ko \
+    $(KERNEL_MODULES_OUT)/audio_swr_ctrl.ko \
+    $(KERNEL_MODULES_OUT)/audio_wsa881x.ko \
+    $(KERNEL_MODULES_OUT)/audio_wsa881x_analog.ko \
+    $(KERNEL_MODULES_OUT)/audio_platform.ko \
+    $(KERNEL_MODULES_OUT)/audio_cpe_lsm.ko \
+    $(KERNEL_MODULES_OUT)/audio_hdmi.ko \
+    $(KERNEL_MODULES_OUT)/audio_stub.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9xxx.ko \
+    $(KERNEL_MODULES_OUT)/audio_mbhc.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd9335.ko \
+    $(KERNEL_MODULES_OUT)/audio_wcd_cpe.ko \
+    $(KERNEL_MODULES_OUT)/audio_digital_cdc.ko \
+    $(KERNEL_MODULES_OUT)/audio_analog_cdc.ko \
+    $(KERNEL_MODULES_OUT)/audio_native.ko \
+    $(KERNEL_MODULES_OUT)/audio_machine_sdm450.ko \
+    $(KERNEL_MODULES_OUT)/audio_machine_ext_sdm450.ko
 endif
 
 ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
-     BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 androidboot.hardware=qcom user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000 firmware_class.path=/vendor/firmware_mnt/image
+     BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 androidboot.hardware=qcom user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000 vmalloc=300M androidboot.selinux=permissive firmware_class.path=/vendor/firmware_mnt/image androidboot.usbconfigfs=true
 else ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
      BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom androidboot.memcg=false user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000 firmware_class.path=/vendor/firmware_mnt/image
 endif
@@ -226,4 +271,9 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm
 
 ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
 PMIC_QG_SUPPORT := true
+endif
+
+#Generate DTBO image
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+BOARD_KERNEL_SEPARATED_DTBO := true
 endif
