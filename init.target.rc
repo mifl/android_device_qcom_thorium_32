@@ -53,7 +53,7 @@ on fs
     mount ext4 /dev/block/bootdevice/by-name/oem /oem ro nosuid nodev barrier=1
 
 on post-fs
-    start qseecomd
+    start vendor.qseecomd
     exec - system system -- /vendor/bin/init.qti.qseecomd.sh
     write /dev/ipa 1
 
@@ -108,7 +108,7 @@ service qrngp /system/bin/qrngp -f
 on property:sys.boot_completed=1
    start qrngp
 
-service qseecomd /vendor/bin/qseecomd
+service vendor.qseecomd /vendor/bin/qseecomd
    class core
    user root
    group root
@@ -194,6 +194,9 @@ on boot
     chown system system /persist/speccfg/submask
     chown system system /persist/speccfg/partition
 
+# access permission for wlan
+    chown system system /mnt/vendor/persist/WCNSS_qcom_wlan_nv.bin
+
 #USB controller configuration
     setprop vendor.usb.rndis.func.name "rndis"
     setprop vendor.usb.rmnet.func.name "rmnet_bam"
@@ -274,17 +277,14 @@ service vendor.ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
    class main
    user system
    group radio diag inet log
-   disabled
 
 service vendor.imsrcsservice /system/vendor/bin/imsrcsd
    class main
    user system
    group radio diag inet log wakelock
-   disabled
 
 on property:vendor.ims.DATA_DAEMON_STATUS=1
-    start vendor.ims_rtp_daemon
-    start vendor.imsrcsservice
+    restart vendor.ims_rtp_daemon
 
 service hbtp /system/vendor/bin/hbtp_daemon
     class main
