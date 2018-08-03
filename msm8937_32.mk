@@ -98,6 +98,7 @@ KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTAL
 
 DEVICE_MANIFEST_FILE := device/qcom/msm8937_32/manifest.xml
 DEVICE_MATRIX_FILE   := device/qcom/common/compatibility_matrix.xml
+DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/msm8937_32/framework_manifest.xml
 
 ifneq ($(strip $(QCPATH)),)
     PRODUCT_BOOT_JARS += WfdCommon
