@@ -71,7 +71,7 @@ PRODUCT_COPY_FILES += device/qcom/msm8937_32/whitelistedapps.xml:system/etc/whit
 
 PRODUCT_PROPERTY_OVERRIDES += \
     vendor.vidc.disable.split.mode=1 \
-    vendor.mediacodec.binder.size=1
+    vendor.mediacodec.binder.size=2
 
 PRODUCT_PROPERTY_OVERRIDES += \
        dalvik.vm.heapminfree=6m \
