@@ -70,7 +70,8 @@ PRODUCT_COPY_FILES += device/qcom/msm8937_32/whitelistedapps.xml:system/etc/whit
                       device/qcom/msm8937_32/gamedwhitelist.xml:system/etc/gamedwhitelist.xml
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    vendor.vidc.disable.split.mode=1
+    vendor.vidc.disable.split.mode=1 \
+    vendor.mediacodec.binder.size=2
 
 PRODUCT_PROPERTY_OVERRIDES += \
        dalvik.vm.heapminfree=6m \
@@ -360,6 +361,10 @@ endif
 TARGET_MOUNT_POINTS_SYMLINKS := false
 
 SDM660_DISABLE_MODULE := true
+
+#Property for enabling learning module
+PRODUCT_PROPERTY_OVERRIDES += vendor.debug.enable.lm=1
+
 # When AVB 2.0 is enabled, dm-verity is enabled differently,
 # below definitions are only required for AVB 1.0
 ifeq ($(BOARD_AVB_ENABLE),false)
