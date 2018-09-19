@@ -337,7 +337,9 @@ PRODUCT_PACKAGES_DEBUG += bootctl
 endif
 
 #Property for enabling learning module
+ifneq ($(wildcard kernel/msm-4.9),)
 PRODUCT_PROPERTY_OVERRIDES += debug.vendor.qti.enable.lm=1
+endif
 
 # When AVB 2.0 is enabled, dm-verity is enabled differently,
 # below definitions are only required for AVB 1.0
