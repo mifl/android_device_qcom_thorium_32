@@ -170,6 +170,8 @@ PRODUCT_PACKAGES += \
 
 
 # Feature definition files for msm8937
+PRODUCT_PROPERTY_OVERRIDES += \
+ persist.vendor.sensor.hw.binder.size=8
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.accelerometer.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.compass.xml \
@@ -365,7 +367,9 @@ TARGET_MOUNT_POINTS_SYMLINKS := false
 SDM660_DISABLE_MODULE := true
 
 #Property for enabling learning module
+ifneq ($(wildcard kernel/msm-4.9),)
 PRODUCT_PROPERTY_OVERRIDES += vendor.debug.enable.lm=1
+endif
 
 # When AVB 2.0 is enabled, dm-verity is enabled differently,
 # below definitions are only required for AVB 1.0
