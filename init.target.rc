@@ -247,6 +247,7 @@ on charger
     start qcom-post-boot
     setprop persist.sys.usb.config mass_storage
     start vendor.hvdcp_opti
+    start vendor.vm_bms
 
 service imsstarter /vendor/bin/init.qti.ims.sh
     class main
@@ -334,6 +335,11 @@ on property:sys.shutdown.requested=*
     stop vendor.per_proxy
 
 service vendor.hvdcp_opti /vendor/bin/hvdcp_opti
+    class main
+    user root
+    group system wakelock
+
+service vendor.vm_bms  /vendor/bin/vm_bms
     class main
     user root
     group system wakelock
