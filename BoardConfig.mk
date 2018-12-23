@@ -286,3 +286,11 @@ endif
 ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 TARGET_USES_LM := true
 endif
+
+
+#################################################################################
+# This is the End of BoardConfig.mk file.
+# Now, Pickup other split Board.mk files:
+#################################################################################
+-include vendor/qcom/defs/board-defs/legacy/*.mk
+#################################################################################
