@@ -33,11 +33,6 @@ ENABLE_AB ?= false
 
 TARGET_USES_NQ_NFC := true
 
-ifeq ($(TARGET_USES_NQ_NFC),true)
-PRODUCT_COPY_FILES += \
-    device/qcom/common/nfc/libnfc-brcm.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nci.conf
-endif
-
 ifneq ($(wildcard kernel/msm-3.18),)
     TARGET_KERNEL_VERSION := 3.18
     $(warning "Build with 3.18 kernel.")
