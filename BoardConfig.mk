@@ -17,16 +17,18 @@
 # Product-specific compile-time definitions.
 #
 
+BUILD_BROKEN_ANDROIDMK_EXPORTS :=true
+BUILD_BROKEN_DUP_COPY_HEADERS :=true
+BUILD_BROKEN_DUP_RULES :=true
+BUILD_BROKEN_PHONY_TARGETS :=true
+
 ifeq ($(TARGET_ARCH),)
 TARGET_ARCH := arm
 endif
 
-ifeq ($(TARGET_KERNEL_VERSION), 4.9)
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-linux-androidkernel-
-else
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(PWD)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
-endif
-
+#TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(PWD)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androidkernel-
+#TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-androidkernel-
 BOARD_USES_GENERIC_AUDIO := true
 
 -include $(QCPATH)/common/msm8937_32/BoardConfigVendor.mk
@@ -197,6 +199,7 @@ else ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
      BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom androidboot.memcg=false user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000 loop.max_part=7
 endif
 
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_SECCOMP_POLICY := device/qcom/msm8937_32/seccomp
 
 BOARD_EGL_CFG := device/qcom/msm8937_32/egl.cfg
@@ -283,6 +286,15 @@ BOARD_VNDK_VERSION := current
 TARGET_USES_64_BIT_BINDER := true
 endif
 
+ifneq ($(ENABLE_AB),true)
+  ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+    # Set Header version for bootimage
+    BOARD_BOOTIMG_HEADER_VERSION := 1
+    BOARD_MKBOOTIMG_ARGS := --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+    # Enable DTBO for recovery image
+    BOARD_INCLUDE_RECOVERY_DTBO := true
+  endif
+endif
 #################################################################################
 # This is the End of BoardConfig.mk file.
 # Now, Pickup other split Board.mk files:
