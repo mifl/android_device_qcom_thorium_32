@@ -26,7 +26,7 @@ endif
 # Default A/B configuration.
 ENABLE_AB ?= false
 
-TARGET_USES_NQ_NFC := true
+TARGET_USES_NQ_NFC := false
 
 ifeq ($(TARGET_USES_NQ_NFC),true)
 PRODUCT_COPY_FILES += \
@@ -102,7 +102,7 @@ DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/msm8937_32/framework_manifest.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     vendor/qcom/opensource/core-utils/vendor_framework_compatibility_matrix.xml
 ifneq ($(strip $(QCPATH)),)
-    PRODUCT_BOOT_JARS += WfdCommon
+ #   PRODUCT_BOOT_JARS += WfdCommon
     PRODUCT_BOOT_JARS += oem-services
     PRODUCT_BOOT_JARS += tcmiface
 #    PRODUCT_BOOT_JARS += dpmapi
@@ -111,6 +111,8 @@ endif
 
 # Audio configuration file
 -include $(TOPDIR)hardware/qcom/audio/configs/msm8937/msm8937.mk
+
+USE_LIB_PROCESS_GROUP := true
 
 #Audio DLKM
 ifeq ($(TARGET_KERNEL_VERSION), 4.9)
@@ -393,6 +395,11 @@ ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
     PRODUCT_PACKAGES += vendor-extra-libs
 endif
 
+# For bringup
+WLAN_BRINGUP_NEW_SP := true
+DISP_BRINGUP_NEW_SP := true
+CAM_BRINGUP_NEW_SP := true
+SEC_USERSPACE_BRINGUP_NEW_SP := true
 
 ###################################################################################
 # This is the End of target.mk file.

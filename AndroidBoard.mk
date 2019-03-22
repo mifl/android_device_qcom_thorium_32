@@ -56,8 +56,15 @@ endif
 ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 DTC := $(HOST_OUT_EXECUTABLES)/dtc$(HOST_EXECUTABLE_SUFFIX)
 
-TARGET_KERNEL_MAKE_ENV := DTC_EXT=dtc$(HOST_EXECUTABLE_SUFFIX)
+TEMP_TOP=$(shell pwd)
+TARGET_KERNEL_MAKE_ENV := DTC_EXT=$(TEMP_TOP)/$(DTC)
 TARGET_KERNEL_MAKE_ENV += CONFIG_BUILD_ARM64_DT_OVERLAY=y
+TARGET_KERNEL_MAKE_ENV += HOSTCC=$(TEMP_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/bin/x86_64-linux-gcc
+TARGET_KERNEL_MAKE_ENV += HOSTAR=$(TEMP_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/bin/x86_64-linux-ar
+TARGET_KERNEL_MAKE_ENV += HOSTLD=$(TEMP_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/bin/x86_64-linux-ld
+TARGET_KERNEL_MAKE_ENV += HOSTCFLAGS="-I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu"
+TARGET_KERNEL_MAKE_ENV += HOSTLDFLAGS="-L/usr/lib -L/usr/lib/x86_64-linux-gnu"
+
 endif
 
 include $(TARGET_KERNEL_SOURCE)/AndroidKernel.mk
@@ -234,4 +241,11 @@ include device/qcom/common/generate_extra_images.mk
 #----------------------------------------------------------------------
 ifeq ($(BUILD_TINY_ANDROID), true)
 include device/qcom/common/rootdir/Android.mk
+endif
+
+#----------------------------------------------------------------------
+# override default make with prebuilt make path (if any)
+#----------------------------------------------------------------------
+ifneq (, $(wildcard $(shell pwd)/prebuilts/build-tools/linux-x86/bin/make))
+    MAKE := $(shell pwd)/prebuilts/build-tools/linux-x86/bin/$(MAKE)
 endif
