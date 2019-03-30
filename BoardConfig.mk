@@ -30,6 +30,8 @@ endif
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androidkernel-
 #TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(shell pwd)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-androidkernel-
 BOARD_USES_GENERIC_AUDIO := true
+# TODO(b/124534788): Temporarily allow eng and debug LOCAL_MODULE_TAGS
+BUILD_BROKEN_ENG_DEBUG_TAGS:=true
 
 -include $(QCPATH)/common/msm8937_32/BoardConfigVendor.mk
 TARGET_COMPILE_WITH_MSM_KERNEL := true
