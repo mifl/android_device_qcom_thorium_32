@@ -201,7 +201,7 @@ else ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
      BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom androidboot.memcg=false user_debug=30 msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlycon=msm_hsl_uart,0x78B0000 loop.max_part=7
 endif
 
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+#BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_SECCOMP_POLICY := device/qcom/msm8937_32/seccomp
 
 BOARD_EGL_CFG := device/qcom/msm8937_32/egl.cfg
