@@ -356,7 +356,6 @@ PRODUCT_PACKAGES += update_engine \
                    update_engine_client \
                    update_verifier \
                    bootctrl.msm8937 \
-                   brillo_update_payload \
                    android.hardware.boot@1.0-impl \
                    android.hardware.boot@1.0-service
 #Boot control HAL test app
