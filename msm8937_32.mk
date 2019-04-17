@@ -112,6 +112,8 @@ endif
 # Audio configuration file
 -include $(TOPDIR)hardware/qcom/audio/configs/msm8937/msm8937.mk
 
+-include $(TOPDIR)vendor/qcom/opensource/audio-hal/primary-hal/configs/msm8937/msm8937.mk
+
 USE_LIB_PROCESS_GROUP := true
 
 #Audio DLKM
@@ -354,7 +356,6 @@ PRODUCT_PACKAGES += update_engine \
                    update_engine_client \
                    update_verifier \
                    bootctrl.msm8937 \
-                   brillo_update_payload \
                    android.hardware.boot@1.0-impl \
                    android.hardware.boot@1.0-service
 #Boot control HAL test app
