@@ -66,6 +66,7 @@ endif
 # video seccomp policy files
 PRODUCT_COPY_FILES += \
     device/qcom/msm8937_32/seccomp/mediacodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
+    device/qcom/msm8937_32/seccomp/mediaswcodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaswcodec.policy \
     device/qcom/msm8937_32/seccomp/mediaextractor-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -77,6 +78,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
        dalvik.vm.heapstartsize=14m
 $(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
 $(call inherit-product, device/qcom/common/common.mk)
+
+#Property to enable Swap
+PRODUCT_PROPERTY_OVERRIDES += ro.vendor.qti.config.swap=1
 
 PRODUCT_NAME := msm8937_32
 PRODUCT_DEVICE := msm8937_32
