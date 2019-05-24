@@ -106,7 +106,7 @@ DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/msm8937_32/framework_manifest.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     vendor/qcom/opensource/core-utils/vendor_framework_compatibility_matrix.xml
 ifneq ($(strip $(QCPATH)),)
- #   PRODUCT_BOOT_JARS += WfdCommon
+    PRODUCT_BOOT_JARS += WfdCommon
 #    PRODUCT_BOOT_JARS += oem-services
     PRODUCT_BOOT_JARS += tcmiface
 #    PRODUCT_BOOT_JARS += dpmapi
