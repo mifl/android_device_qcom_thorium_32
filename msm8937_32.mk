@@ -400,6 +400,11 @@ endif
 
 TARGET_MOUNT_POINTS_SYMLINKS := false
 
+ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
+PRODUCT_HOST_PACKAGES += \
+        AWBTestApp
+endif
+
 SDM660_DISABLE_MODULE := true
 
 # When AVB 2.0 is enabled, dm-verity is enabled differently,
