@@ -50,8 +50,6 @@ ifeq ($(ENABLE_VENDOR_IMAGE), true)
 #TARGET_USES_QTIC := false
 endif
 
-# Default A/B configuration.
-ENABLE_AB ?= false
 
 TARGET_USES_NQ_NFC := false
 
@@ -127,6 +125,9 @@ KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTAL
                      com.qti.dpmframework
 
 DEVICE_MANIFEST_FILE := device/qcom/msm8937_32/manifest.xml
+ifeq ($(ENABLE_AB), true)
+DEVICE_MANIFEST_FILE += device/qcom/msm8937_32/manifest_ab.xml
+endif
 DEVICE_MATRIX_FILE   := device/qcom/common/compatibility_matrix.xml
 DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/msm8937_32/framework_manifest.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
@@ -385,6 +386,10 @@ PRODUCT_PACKAGES += update_engine \
                    bootctrl.msm8937 \
                    android.hardware.boot@1.0-impl \
                    android.hardware.boot@1.0-service
+
+PRODUCT_HOST_PACKAGES += \
+    brillo_update_payload
+
 #Boot control HAL test app
 PRODUCT_PACKAGES_DEBUG += bootctl
 
