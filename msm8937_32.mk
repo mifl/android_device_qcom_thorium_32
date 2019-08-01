@@ -20,6 +20,9 @@ endif
 ifneq ($(wildcard kernel/msm-4.9),)
 BOARD_AVB_ENABLE := true
 
+# privapp-permissions whitelisting
+PRODUCT_PROPERTY_OVERRIDES += ro.control_privapp_permissions=enforce
+
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
 # enable vbmeta_system
 BOARD_AVB_VBMETA_SYSTEM := system
