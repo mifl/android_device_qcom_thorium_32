@@ -20,6 +20,9 @@ endif
 ifneq ($(wildcard kernel/msm-4.9),)
 BOARD_AVB_ENABLE := true
 
+# privapp-permissions whitelisting
+PRODUCT_PROPERTY_OVERRIDES += ro.control_privapp_permissions=enforce
+
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
 # enable vbmeta_system
 BOARD_AVB_VBMETA_SYSTEM := system
@@ -87,6 +90,11 @@ PRODUCT_COPY_FILES += device/qcom/msm8937_32/media/media_profiles_8937.xml:syste
                       device/qcom/msm8937_32/media/media_codecs_8956.xml::$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_8956.xml \
                       device/qcom/msm8937_32/media/media_codecs_performance_8937.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_performance.xml \
                       device/qcom/msm8937_32/media/media_codecs_vendor_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor_audio.xml
+
+# Vendor property overrides
+  #Rank OMX SW codecs lower than OMX HW codecs
+  PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank.sw-audio=1
+  PRODUCT_PROPERTY_OVERRIDES += debug.stagefright.omx_default_rank=0
 endif
 # video seccomp policy files
 PRODUCT_COPY_FILES += \

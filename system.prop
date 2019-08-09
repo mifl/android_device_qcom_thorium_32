@@ -17,9 +17,9 @@ persist.rild.nitz_short_ons_3=
 ril.subscription.types=NV,RUIM
 DEVICE_PROVISIONED=1
 #
-# Set network mode to (T/L/G/W/1X/EVDO, T/G/W/L) for 7+5 mode device on DSDS mode
+#Set network mode to (T/L/G/W/1X/EVDO, T/L/G/W/1X/EVDO) for 7+7 mode device on DSDS mode
 #
-ro.telephony.default_network=22,20
+ro.telephony.default_network=22,22
 
 debug.sf.enable_hwc_vds=1
 debug.sf.hw=1
@@ -174,6 +174,13 @@ camera.hal1.packagelist=com.skype.raider,com.google.android.talk
 #properties for limiting preview size in camera
 persist.vendor.camera.display.umax=1920x1080
 persist.vendor.camera.display.lmax=1280x720
+
+#Expose aux camera for below packages
+vendor.camera.aux.packagelist=org.codeaurora.snapcam
+
+#Whitelisting the below packages
+persist.vendor.camera.privapp.list=org.codeaurora.snapcam
+persist.camera.privapp.list=org.codeaurora.snapcam
 
 #set cutoff voltage to 3400mV
 ro.cutoff_voltage_mv=3400
