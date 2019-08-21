@@ -9,6 +9,8 @@ BOARD_DYNAMIC_PARTITION_ENABLE ?= false
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 PRODUCT_PACKAGES += fastbootd
+# Add default implementation of fastboot HAL.
+PRODUCT_PACKAGES += android.hardware.fastboot@1.0-impl-mock
 ifeq ($(ENABLE_AB), true)
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/fstabs-4.9/fstab_AB_dynamic_partition_variant.qti:$(TARGET_COPY_OUT_RAMDISK)/fstab.qcom
 else
@@ -20,9 +22,14 @@ endif
 ifneq ($(wildcard kernel/msm-4.9),)
 BOARD_AVB_ENABLE := true
 
+# privapp-permissions whitelisting
+PRODUCT_PROPERTY_OVERRIDES += ro.control_privapp_permissions=enforce
+
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+# Enable product partition
+PRODUCT_BUILD_PRODUCT_IMAGE := true
 # enable vbmeta_system
-BOARD_AVB_VBMETA_SYSTEM := system
+BOARD_AVB_VBMETA_SYSTEM := system product
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
@@ -50,8 +57,6 @@ ifeq ($(ENABLE_VENDOR_IMAGE), true)
 #TARGET_USES_QTIC := false
 endif
 
-# Default A/B configuration.
-ENABLE_AB ?= false
 
 TARGET_USES_NQ_NFC := false
 
@@ -132,6 +137,9 @@ KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTAL
                      com.qti.dpmframework
 
 DEVICE_MANIFEST_FILE := device/qcom/msm8937_32/manifest.xml
+ifeq ($(ENABLE_AB), true)
+DEVICE_MANIFEST_FILE += device/qcom/msm8937_32/manifest_ab.xml
+endif
 DEVICE_MATRIX_FILE   := device/qcom/common/compatibility_matrix.xml
 DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/msm8937_32/framework_manifest.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
@@ -390,6 +398,10 @@ PRODUCT_PACKAGES += update_engine \
                    bootctrl.msm8937 \
                    android.hardware.boot@1.0-impl \
                    android.hardware.boot@1.0-service
+
+PRODUCT_HOST_PACKAGES += \
+    brillo_update_payload
+
 #Boot control HAL test app
 PRODUCT_PACKAGES_DEBUG += bootctl
 

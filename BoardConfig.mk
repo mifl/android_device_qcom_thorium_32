@@ -17,6 +17,14 @@
 # Product-specific compile-time definitions.
 #
 
+#Generate DTBO image
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
+BOARD_KERNEL_SEPARATED_DTBO := true
+BOARD_SYSTEMSDK_VERSIONS :=28
+BOARD_VNDK_VERSION := current
+TARGET_USES_64_BIT_BINDER := true
+endif
+
 ### Dynamic partition Handling
 ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
   ifeq ($(ENABLE_VENDOR_IMAGE), true)
@@ -29,17 +37,30 @@ ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
       BOARD_USES_RECOVERY_AS_BOOT := true
   else
       BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x04000000
+      ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+        # Enable DTBO for recovery image
+        BOARD_INCLUDE_RECOVERY_DTBO := true
+      endif
   endif
 else
+  # Product partition support
+  TARGET_COPY_OUT_PRODUCT := product
+  BOARD_USES_PRODUCTIMAGE := true
+  BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
   # Define the Dynamic Partition sizes and groups.
   ifeq ($(ENABLE_AB), true)
     BOARD_SUPER_PARTITION_SIZE := 12884901888
   else
     BOARD_SUPER_PARTITION_SIZE := 5318967296
   endif
+  ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+    # Enable DTBO for recovery image
+    BOARD_INCLUDE_RECOVERY_DTBO := true
+  endif
   BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
   BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 5314772992
-  BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor
+  BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system product vendor
+  BOARD_EXT4_SHARE_DUP_BLOCKS := true
   BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
 endif
 ### Dynamic partition Handling
@@ -62,7 +83,9 @@ BUILD_BROKEN_ENG_DEBUG_TAGS:=true
 
 -include $(QCPATH)/common/msm8937_32/BoardConfigVendor.mk
 TARGET_COMPILE_WITH_MSM_KERNEL := true
+#Enable appended dtb
 TARGET_KERNEL_APPEND_DTB := true
+
 #TODO: Fix-me: Setting TARGET_HAVE_HDMI_OUT to false
 # to get rid of compilation error.
 TARGET_HAVE_HDMI_OUT := false
@@ -122,9 +145,11 @@ AB_OTA_UPDATER := true
 # Full A/B partiton update set
 # AB_OTA_PARTITIONS := xbl rpm tz hyp pmic modem abl boot keymaster cmnlib cmnlib64 system bluetooth
 # Subset A/B partitions for Android-only image update
-AB_OTA_PARTITIONS ?= boot system
-TARGET_NO_RECOVERY := true
-BOARD_USES_RECOVERY_AS_BOOT := true
+    ifeq ($(ENABLE_VENDOR_IMAGE), true)
+      AB_OTA_PARTITIONS ?= boot system vendor
+    else
+      AB_OTA_PARTITIONS ?= boot system
+    endif
 else
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
@@ -309,23 +334,19 @@ ifeq ($(strip $(TARGET_KERNEL_VERSION)), 4.9)
 PMIC_QG_SUPPORT := true
 endif
 
-#Generate DTBO image
-ifeq ($(TARGET_KERNEL_VERSION), 4.9)
-BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_SYSTEMSDK_VERSIONS :=28
-BOARD_VNDK_VERSION := current
-TARGET_USES_64_BIT_BINDER := true
+ifeq ($(BOARD_KERNEL_SEPARATED_DTBO), true)
+# Set Header version for bootimage
+ifneq ($(strip $(TARGET_KERNEL_APPEND_DTB)),true)
+#Enable dtb in boot image and Set Header version
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+BOARD_BOOTIMG_HEADER_VERSION := 2
+else
+BOARD_BOOTIMG_HEADER_VERSION := 1
 endif
 
-ifneq ($(ENABLE_AB),true)
-  ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
-    # Set Header version for bootimage
-    BOARD_BOOTIMG_HEADER_VERSION := 1
-    BOARD_MKBOOTIMG_ARGS := --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
-    # Enable DTBO for recovery image
-    BOARD_INCLUDE_RECOVERY_DTBO := true
-  endif
+BOARD_MKBOOTIMG_ARGS := --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 endif
+
 #################################################################################
 # This is the End of BoardConfig.mk file.
 # Now, Pickup other split Board.mk files:
