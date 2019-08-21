@@ -9,6 +9,8 @@ BOARD_DYNAMIC_PARTITION_ENABLE ?= false
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 PRODUCT_PACKAGES += fastbootd
+# Add default implementation of fastboot HAL.
+PRODUCT_PACKAGES += android.hardware.fastboot@1.0-impl-mock
 ifeq ($(ENABLE_AB), true)
 PRODUCT_COPY_FILES += $(LOCAL_PATH)/fstabs-4.9/fstab_AB_dynamic_partition_variant.qti:$(TARGET_COPY_OUT_RAMDISK)/fstab.qcom
 else
@@ -24,8 +26,10 @@ BOARD_AVB_ENABLE := true
 PRODUCT_PROPERTY_OVERRIDES += ro.control_privapp_permissions=enforce
 
 ifeq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+# Enable product partition
+PRODUCT_BUILD_PRODUCT_IMAGE := true
 # enable vbmeta_system
-BOARD_AVB_VBMETA_SYSTEM := system
+BOARD_AVB_VBMETA_SYSTEM := system product
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
@@ -412,6 +416,11 @@ PRODUCT_PACKAGES += \
 endif
 
 TARGET_MOUNT_POINTS_SYMLINKS := false
+
+ifeq ($(strip $(TARGET_KERNEL_VERSION)), 3.18)
+PRODUCT_HOST_PACKAGES += \
+        AWBTestApp
+endif
 
 SDM660_DISABLE_MODULE := true
 
