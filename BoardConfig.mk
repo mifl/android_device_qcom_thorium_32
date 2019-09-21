@@ -278,4 +278,6 @@ ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 BOARD_KERNEL_SEPARATED_DTBO := true
 endif
 
+ifeq ($(TARGET_KERNEL_VERSION), 4.9)
 TARGET_USES_LM := true
+endif
